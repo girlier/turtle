@@ -17,3 +17,6 @@
                  (_(___/       -turtle-           \_____)_)
 
 ```
+
+# OOP Graphics Turtle
+This is my Java OOP University project to make a jframe turtle based on an already created class
