@@ -2,6 +2,7 @@ import javax.swing.JFrame;
 import uk.ac.leedsbeckett.oop.OOPGraphics;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,8 +41,7 @@ public class TurtleGraphics extends OOPGraphics {
         MainFrame.add(this);                                  
         MainFrame.pack();                                             
         MainFrame.setVisible(true);   
-        displayMessage("Rosie's Turtle");                       
-        about();                                                               
+        //about();                                                               
     }
 
     public void processCommand(String command) {
@@ -75,7 +75,7 @@ public class TurtleGraphics extends OOPGraphics {
                         int x = getxPos() + (int) (parameter * Math.cos(Math.toRadians(getDirection())));
                         int y = getyPos() + (int) (parameter * Math.sin(Math.toRadians(getDirection())));
                         if (Bounds.isWithinBounds(x, y)) {
-                            super.forward(parameter);
+                            forward(parameter);
                         } else {
                             displayMessage("Cannot move forward. Would be Out of bounds.");
                         }
@@ -90,10 +90,10 @@ public class TurtleGraphics extends OOPGraphics {
                     if (cmdSection.length >= 2) {
                         try {
                             parameter = Integer.parseInt(cmdSection[1]);
-                            int x = getxPos() - (int) (parameter * Math.cos(Math.toRadians(getDirection())));
-                            int y = getyPos() - (int) (parameter * Math.sin(Math.toRadians(getDirection())));
+                            int x = (int) (parameter * Math.cos(Math.toRadians(getDirection()))) + getxPos() ;
+                            int y = (int) (parameter * Math.sin(Math.toRadians(getDirection()))) + getyPos() ;
                             if (Bounds.isWithinBounds(x, y)) {
-                                super.forward(parameter * -1);
+                                backward(parameter);
                             } else {
                                 displayMessage("Cannot move backward. Would be out of bounds.");
                             }
@@ -231,6 +231,7 @@ public class TurtleGraphics extends OOPGraphics {
     }
 
     // commands
+    
     //Penup
     @Override
     public void penUp() {
@@ -447,10 +448,10 @@ public class TurtleGraphics extends OOPGraphics {
                 }
                 br.close();
                 String[] loadedCommands = commandsList.StringToArray(sb.toString());
-                displayMessage("Loaded " + loadedCommands.length + " commands from " + filename + ".txt");
                 for (String command : loadedCommands) {
                     processCommand(command);
                 }
+                displayMessage("Loaded " + loadedCommands.length + " commands from " + filename + ".txt");
             } catch (IOException e) {
                 displayMessage("Error loading file: " + e.getMessage());
                 Warning("Error loading file: " + e.getMessage());
@@ -484,16 +485,20 @@ class Commands {
     public static String ArrayToString(String[] array) {
         StringBuilder builder = new StringBuilder();
         for (String item : array) {
-            builder.append("| ").append(item);
+            builder.append(" | ").append(item);
         }
         builder.append("|");
         return builder.toString();
     }
 
-    public String[] StringToArray(String string) {
-        String[] array = string.split("\\|");
-        return array;
+    public static String[] StringToArray(String str) {
+        String[] commands = str.split("\\|");
+        for (int i = 0; i < commands.length; i++) {
+            commands[i] = commands[i].trim();
+        }
+        return commands;
     }
+    
 }
 
 class Bounds {
